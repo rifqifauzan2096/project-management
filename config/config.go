@@ -38,7 +38,7 @@ func LoadEnv(){
 	AppConfig = &Config{
 		AppPort:         getEnv("PORT", "3030"),
 		DBHost:          getEnv("DB_HOST", "localhost"),
-		DBPort:          getEnv("DB_PORT", "5432"),
+		DBPort:          getEnv("DB_PORT", "5431"),
 		DBUser:          getEnv("DB_USER", "postgres"),
 		DBPassword:      getEnv("DB_PASSWORD", "password"),
 		DBName:          getEnv("DB_NAME", "project_management"),
@@ -58,7 +58,7 @@ func getEnv(key string, fallback string) string {
 	}
 }
 
-func connectDB(){
+func ConnectDB(){
 	cfg := AppConfig
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", 
 			cfg.DBHost, cfg.DBPort, cfg.DBUser, cfg.DBPassword, cfg.DBName)
