@@ -24,7 +24,6 @@ type Config struct{
 	DBPassword string
 	DBName string
 	JWTSecret string
-	JWTExpMinutes string
 	JWTRefreshToken string
 	JWTExpire string
 }
