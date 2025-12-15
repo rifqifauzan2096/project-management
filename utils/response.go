@@ -10,7 +10,7 @@ type Response struct {
 	Error 			string 		`json:"error,omitempty"`
 }
 
-func Success(c fiber.Ctx, message string, data interface{}) error {
+func Success(c *fiber.Ctx, message string, data interface{}) error {
 	return c.Status(fiber.StatusOK).JSON(Response{
 		Status: "Success",
 		ResponseCode: fiber.StatusOK,
@@ -30,21 +30,20 @@ func Created(c fiber.Ctx, message string, data interface{}) error {
 }
 
 
-func BadRequest(c fiber.Ctx, message string, data interface{}) error {
+func BadRequest(c *fiber.Ctx, message string, err string) error {
 	return c.Status(fiber.StatusBadRequest).JSON(Response{
 		Status: "Bad Request",
 		ResponseCode: fiber.StatusBadRequest,
 		Message: message,
-		Data: data,
+		Error: err,
 	})
 }
 
-func NotFound(c fiber.Ctx, message string, data interface{}, err string) error {
+func NotFound(c *fiber.Ctx, message string, err string) error {
 	return c.Status(fiber.StatusNotFound).JSON(Response{
 		Status: "Success",
 		ResponseCode: fiber.StatusNotFound,
 		Message: message,
-		Data: data,
 		Error: err,
 	})
 }
