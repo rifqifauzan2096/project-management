@@ -21,9 +21,11 @@ require (
 	github.com/go-openapi/swag/yamlutils v0.25.4 // indirect
 	github.com/gofiber/fiber/v2 v2.52.10 // indirect
 	github.com/gofiber/fiber/v3 v3.0.0-rc.3 // indirect
+	github.com/gofiber/jwt/v3 v3.3.10 // indirect
 	github.com/gofiber/schema v1.6.0 // indirect
 	github.com/gofiber/swagger/v2 v2.0.0-20251031122725-30bc194ed26e // indirect
 	github.com/gofiber/utils/v2 v2.0.0-rc.4 // indirect
+	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	github.com/golang-jwt/jwt/v5 v5.3.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
