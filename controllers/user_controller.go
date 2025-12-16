@@ -33,3 +33,33 @@ func (uc *UserController) Register(ctx *fiber.Ctx) error {
 	_ = copier.Copy(&userResp, &user)
 	return  utils.Success(ctx, "Register user success", userResp)
 }
+
+func (uc *UserController) Login(ctx *fiber.Ctx) error {
+	var body struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+	
+	if err := ctx.BodyParser(&body); err != nil {
+		return utils.BadRequest(ctx, "Invalid request body", err.Error())
+	}
+
+	user, err := uc.userService.Login(body.Email, body.Password)
+
+	if err != nil {
+		return utils.Unauthorize(ctx, "Login Failed", err.Error())
+	}
+
+	token, _ := utils.GenerateToken(user.InternalID, user.Role, user.Email, user.PublicID)
+	refreshToken, _ := utils.GenerateRefreshToken(user.InternalID)
+
+	var userResp models.UserResponse
+	_ = copier.Copy(&userResp, &user)
+
+	return utils.Success(ctx, "Login Successful", fiber.Map{
+		"access_token": token,
+		"refresh_token": refreshToken,
+		"user": userResp,
+	})
+	
+}
