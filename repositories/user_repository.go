@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"strings"
+
 	"github.com/rifqifauzan2096/project-management/config"
 	"github.com/rifqifauzan2096/project-management/models"
 )
@@ -11,6 +13,7 @@ type UserRepository interface {
 	FindByEmail(email string) (*models.User, error)
 	FindByID(id uint) (*models.User, error)
 	FindByPublicID(publicID string) (*models.User, error)
+	FindAllPagination(filter, sort string, limit, offset int) ([]models.User, int64,error)
 }
 
 type userRepository struct{}
@@ -42,4 +45,41 @@ func (r *userRepository) FindByPublicID(publicID string) (*models.User, error){
 	err := config.DB.Where("public_id = ?", publicID).First(&user).Error
 
 	return &user, err
+}
+
+func (r *userRepository) FindAllPagination(filter, sort string, limit, offset int) ([]models.User, int64,error){
+	var users []models.User
+	var totalRows int64
+
+	db := config.DB.Model(&models.User{})
+
+	if filter != "" {
+		filterPattern := "%" + filter + "%"
+		db = db.Where("name ILIKE ? OR email ILIKE ?", filterPattern, filterPattern)
+	}
+
+	//counting total rows
+	if err := db.Count(&totalRows).Error; err != nil{
+		return nil, 0, err
+	}
+
+	//sorting
+	if sort != "" {
+		if sort == "-id" {
+			sort = "-internal_id "
+		} else if sort == "id" {
+			sort = "internal_id "
+		}
+
+		if strings.HasPrefix(sort, "-") {
+			sort = strings.TrimPrefix(sort, "-") + " DESC"
+		} else{
+			sort += " ASC"
+		}
+
+		db = db.Order(sort)
+	}
+
+	err := db.Limit(limit).Offset(offset).Find(&users).Error
+	return users, totalRows, err
 }

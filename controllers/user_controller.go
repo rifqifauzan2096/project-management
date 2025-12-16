@@ -1,6 +1,9 @@
 package controllers
 
 import (
+	"math"
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/jinzhu/copier"
 	"github.com/rifqifauzan2096/project-management/models"
@@ -79,4 +82,35 @@ func (uc *UserController) GetUser(ctx *fiber.Ctx) error {
 	}
 
 	return utils.Success(ctx, "User retrieved successfully", userResp)
+}
+
+func (uc *UserController) GetUserPagination(ctx *fiber.Ctx) error {
+	page,_ := strconv.Atoi(ctx.Query("page", "1"))
+	limit, _ := strconv.Atoi(ctx.Query("limit", "10"))
+	offset := (page -1) * limit
+	filter := ctx.Query("filter", "")
+	sort := ctx.Query("sort", "")
+
+	users, totalRows, err := uc.userService.GetAllPagination(filter, sort, limit, offset)
+	if err != nil {
+		return utils.BadRequest(ctx, "Failed to get data", err.Error())
+	}
+
+	var userResponses []models.UserResponse
+	_ = copier.Copy(&userResponses, &users)
+
+	meta := utils.PaginationMeta{
+		Page: page,
+		Limit: limit,
+		TotalRows: int(totalRows),
+		TotalPages: int(math.Ceil(float64(totalRows)/float64(limit))),
+		Filter: filter,
+		Sort: sort,
+	}
+
+	if totalRows ==0 {
+		return utils.NotFoundPagination(ctx, "Data user not found", userResponses, meta)
+	}
+
+	return utils.SuccessPagination(ctx, "Data user retrieved successfully", userResponses, meta)
 }
